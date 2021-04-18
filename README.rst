@@ -1,5 +1,5 @@
-Notary
-======
+Notabot
+=======
 
 This python package provides one class, Notarizer, which is intended as a base
 class for a python object which automatically notarizes a signed macOS application
@@ -15,8 +15,8 @@ for a second notarization.  Finally the notarization ticket can be stapled
 to the disk image itself.
 
 The credentials and parameters which are needed for the various notarization
-steps are provided in a config file which should be named notarize.cfg and
-should have the following structure:
+steps are provided in a config file which should be in the current
+directory and should have the following structure:
 
 .. code-block::
 
@@ -35,4 +35,4 @@ This package is available from pypi:
 
 .. code-block::
 
-  pip install notary
+  pip install notabot

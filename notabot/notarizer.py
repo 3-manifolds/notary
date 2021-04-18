@@ -1,13 +1,14 @@
+import sys
 import subprocess
 import json
 import time
 import configparser
 
 """
-This module defines the Notarizer class, which is a base class that needs to be
+This file defines the Notarizer class, which is a base class that needs to be
 extended by defining the build_dmg method in a subclass.
 
-The Notarizer expects to find a config file named notarize.cfg in the current
+The Notarizer is initialized with the name of a config file in the current
 directory. The file should have the following format:
 
 [developer]
