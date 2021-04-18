@@ -1,7 +1,7 @@
 Notary
 ======
 
-This python module provides one class, Notarizer, which is intended as a base
+This python package provides one class, Notarizer, which is intended as a base
 class for a python object which automatically notarizes a signed macOS application
 bundle.  The subclass which does the actual notarization needs to provide a
 method build_dmg which builds the disk image that will be used to distribute
@@ -31,3 +31,8 @@ should have the following structure:
   dmg_path = <path to the disk image that your build_dmg method will create>
   bundle_id = <an (arbitrary) bundle identifier that you provide for the request>
 
+This package is available from pypi:
+
+.. code-block::
+
+  pip install notary
