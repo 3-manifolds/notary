@@ -19,6 +19,7 @@ steps are provided in a config file which should be named notarize.cfg and
 should have the following structure:
 
 .. code-block::
+
   [developer]
   username = <your app store id or email>
   password = <your app-specific password>
