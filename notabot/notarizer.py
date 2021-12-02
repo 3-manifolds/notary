@@ -1,3 +1,4 @@
+import os
 import sys
 import subprocess
 import json
@@ -39,12 +40,13 @@ class Notarizer:
 
     def upload_dmg(self):
         config = self.config
-        print('Uploading %s to Apple ...'%config['app']['dmg_path'])
+        if not os.path.exists(config['app']['dmg_path']):
+            print("No disk image");
         args = ['xcrun', 'altool', '--notarize-app',
+                '-f', '%s'%config['app']['dmg_path'],
                 '--primary-bundle-id', '%s'%config['app']['bundle_id'],
                 '-u', config['developer']['username'],
                 '-p', config['developer']['password'],
-                '-f', '"%s"'%config['app']['dmg_path'],
                 '--output-format', 'json',
                 ]
         start = time.time()
@@ -52,7 +54,7 @@ class Notarizer:
         elapsed = int(round(time.time() - start))
         if result.returncode:
             print("Upload failed:")
-            print(result.stderr)
+            print("output: ", result.stdout)
             sys.exit(1)
         info = json.loads(result.stdout)
         self.UUID = info['notarization-upload']['RequestUUID']
