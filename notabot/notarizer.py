@@ -42,46 +42,30 @@ class Notarizer:
         config = self.config
         if not os.path.exists(config['app']['dmg_path']):
             print("No disk image");
-        args = ['xcrun', 'altool', '--notarize-app',
-                '-f', '%s'%config['app']['dmg_path'],
-                '--primary-bundle-id', '%s'%config['app']['bundle_id'],
-                '-u', config['developer']['username'],
-                '-p', config['developer']['password'],
+        args = ['xcrun', 'notarytool', 'submit',
+                '--apple-id', config['developer']['username'],
+                '--password', config['developer']['password'],
+                '--team-id', config['developer']['identity'],
                 '--output-format', 'json',
-                ]
-        start = time.time()
+                '--wait',
+                config['app']['dmg_path']]
         result = subprocess.run(args, text=True, capture_output=True)
-        elapsed = int(round(time.time() - start))
-        if result.returncode:
-            print("Upload failed:")
-            print("output: ", result.stdout)
-            sys.exit(1)
         info = json.loads(result.stdout)
-        self.UUID = info['notarization-upload']['RequestUUID']
-        print('Request UUID:', self.UUID)
-        print('Uploaded in %s seconds.'%elapsed)
+        print('Notarization status:', info['status'])
+        if result.returncode:
+            log = self.get_log(info['id'])
+            print('Notarization issues:\n', log['issues'])
+            sys.exit(result.returncode)
 
-    def wait_for_result(self):
-        print('Waiting for results ...')
+    def get_log(self, UUID):
         config = self.config
-        args = ['xcrun', 'altool', '--notarization-info', self.UUID,
-                '-u', config['developer']['username'],
-                '-p', config['developer']['password'],
-                '--output-format', 'json']
-        status = 'in progress'
-        while status == 'in progress':
-            time.sleep(59)
-            result = subprocess.run(args, text=True, capture_output=True)
-            if result.returncode:
-                print("Info request failed:")
-                print(result.stderr)
-                sys.exit(1)
-            info = json.loads(result.stdout)
-            status = info['notarization-info']['Status']
-            print(status, '(%s seconds)'%int(round(time.time() - self.start)))
-        if status != 'success':
-            print('Notarization failed')
-            sys.exit(1)
+        args = ['xcrun', 'notarytool', 'log',
+                '--apple-id', config['developer']['username'],
+                '--password', config['developer']['password'],
+                '--team-id', config['developer']['identity'],
+                UUID]
+        result = subprocess.run(args, text=True, capture_output=True)
+        return json.loads(result.stdout)
 
     def staple_app(self):
         config = self.config
