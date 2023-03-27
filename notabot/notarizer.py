@@ -98,11 +98,9 @@ class Notarizer:
     def run(self):
         self.build_dmg()
         self.upload_dmg()
-        self.wait_for_result()
         self.staple_app()
         print('Repackaging the stapled app ...')
         self.build_dmg()
         self.sign_dmg()
         self.upload_dmg()
-        self.wait_for_result()
         self.staple_dmg()
