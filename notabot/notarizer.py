@@ -40,7 +40,8 @@ class Notarizer:
 
     def upload_dmg(self):
         config = self.config
-        if not os.path.exists(config['app']['dmg_path']):
+        dmg_path = config['app']['dmg_path']
+        if not os.path.exists(dmg_path):
             print("No disk image");
         args = ['xcrun', 'notarytool', 'submit',
                 '--apple-id', config['developer']['username'],
@@ -48,14 +49,19 @@ class Notarizer:
                 '--team-id', config['developer']['identity'],
                 '--output-format', 'json',
                 '--wait',
-                config['app']['dmg_path']]
+                dmg_path]
+        print("Notarizing %s" % dmg_path)
         result = subprocess.run(args, text=True, capture_output=True)
         info = json.loads(result.stdout)
+        print('Notarization uuid:', info['id'])
         print('Notarization status:', info['status'])
-        if result.returncode:
+        if info['status'] != 'Success':
             log = self.get_log(info['id'])
-            print('Notarization issues:\n', log['issues'])
-            sys.exit(result.returncode)
+            for info in log['issues']:
+                if info['severity'] == 'error':
+                    print(info['path'])
+                    print('   ', info['message'])
+            sys.exit(-1)
 
     def get_log(self, UUID):
         config = self.config
