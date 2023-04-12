@@ -55,7 +55,7 @@ class Notarizer:
         info = json.loads(result.stdout)
         print('Notarization uuid:', info['id'])
         print('Notarization status:', info['status'])
-        if info['status'] != 'Success':
+        if info['status'] != 'Accepted':
             log = self.get_log(info['id'])
             for info in log['issues']:
                 if info['severity'] == 'error':
