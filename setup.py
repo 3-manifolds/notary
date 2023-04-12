@@ -5,9 +5,10 @@ import sys
 from setuptools import setup
 if sys.version_info.major != 3:
     raise RuntimeError("Use python 3")
+from notabot import __version__ as version
 
 setup(name='notabot',
-    version='1.0',
+    version=version,
     description='Automated notarization tool for macOS applications',
     long_description='''This module provides a base class for an automated notarizer.
 Subclasses must provide a method for building a distribution disk image.''',

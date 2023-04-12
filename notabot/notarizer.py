@@ -57,11 +57,12 @@ class Notarizer:
         print('Notarization status:', info['status'])
         if info['status'] != 'Accepted':
             log = self.get_log(info['id'])
-            for info in log['issues']:
-                if info['severity'] == 'error':
-                    print(info['path'])
-                    print('   ', info['message'])
-            sys.exit(-1)
+            if 'issues' in log:
+                for info in log['issues']:
+                    if info['severity'] == 'error':
+                        print(info['path'])
+                        print('   ', info['message'])
+                sys.exit(-1)
 
     def get_log(self, UUID):
         config = self.config
